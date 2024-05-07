@@ -1,0 +1,662 @@
+body {
+  line-height: 1.15;
+  font-size: 0.5rem;
+  margin: 0;
+  padding: 0;
+  background-repeat: no-repeat;
+  background-position: 0 0 / cover;
+  background-color: #101129;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+.viewport {
+  /* 限定大小 */
+  min-width: 1024px;
+  max-width: 1920px;
+  margin: 0 auto;
+
+  background: url(../image/logo.png) no-repeat 0 0 / contain;
+  display: flex;
+  padding: 3.667rem 0.833rem 0;
+}
+
+.column {
+  flex: 3;
+  position: relative;
+  z-index: 0;
+}
+
+.column:nth-child(2) {
+  flex: 4;
+  margin: 1.333rem 0.833rem 0;
+}
+
+.panel {
+  /* 边框 */
+  box-sizing: border-box;
+  border: 2px solid red;
+  border-image: url(../image/border.png) 51 38 21 132;
+  border-width: 2.125rem 1.583rem 0.875rem 5.5rem;
+  position: relative;
+  margin-bottom: 0.833rem;
+}
+
+.panel .inner {
+  /* 装内容 */
+  /* height: 60px; */
+  position: absolute;
+  top: -2.125rem;
+  right: -1.583rem;
+  bottom: -0.75rem;
+  left: -5.5rem;
+  padding: 1rem 1.5rem;
+}
+
+.panel h3 {
+  font-size: 0.833rem;
+  color: #fff;
+}
+
+/* 概览区域 */
+.overview {
+  height: 4.583rem;
+}
+
+.overview .inner {
+  display: flex;
+  justify-content: space-between;
+}
+
+.overview h4 {
+  font-size: 1.167rem;
+  padding-left: 0.2rem;
+  color: #fff;
+  margin-bottom: 0.333rem
+}
+
+.overview span {
+  font-size: 0.667rem;
+  color: #4c9bfd;
+}
+
+/* 监控 */
+.monitor {
+  height: 20rem;
+}
+
+.monitor .inner {
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.monitor .tabs {
+  padding: 0 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.monitor .tabs a {
+  color: #1950c4;
+  font-size: 0.75rem;
+  padding: 0 1.125rem;
+}
+
+.monitor .tabs a:first-child {
+  border-right: 0.083rem solid #00f2f1;
+  padding-left: 0;
+}
+
+.monitor .tabs a.active {
+  color: #fff;
+}
+
+.monitor .content {
+  flex: 1;
+  display: none;
+  position: relative;
+}
+
+.monitor .head {
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.583rem;
+  padding: 0.5rem 1.5rem;
+  color: #68d8fe;
+  display: flex;
+  justify-content: space-between;
+  line-height: 1.05;
+}
+
+.monitor .col {
+  justify-content: center;
+}
+
+.monitor .col:nth-child(1) {
+  width: 5rem;
+}
+
+.monitor .col:nth-child(2) {
+  width: 5rem;
+  /* 不换行  一行省略*/
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.monitor .col:nth-child(3) {
+  width: 8rem;
+}
+
+.monitor .marquee-view {
+  position: absolute;
+  top: 1.6rem;
+  bottom: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.monitor .row {
+  line-height: 1.05;
+  padding: 0.5rem 1.5rem;
+  color: #61a8ff;
+  font-size: 0.5rem;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+
+.monitor .row:hover {
+  color: #68d8ff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.monitor .row:hover .icon-dot {
+  opacity: 1;
+}
+
+.monitor .icon-dot {
+  position: absolute;
+  left: 0.64rem;
+  opacity: 0;
+}
+
+.monitor .marquee-view {
+  position: absolute;
+  top: 1.6rem;
+  bottom: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.monitor .row {
+  line-height: 1.05;
+  padding: 0.5rem 1.5rem;
+  color: #61a8ff;
+  font-size: 0.5rem;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+
+.monitor .row:hover {
+  color: #68d8ff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.monitor .row:hover .icon-dot {
+  opacity: 1;
+}
+
+.monitor .icon-dot {
+  position: absolute;
+  left: 0.64rem;
+  opacity: 0;
+}
+
+/* ------------------------------------------------------------动画 */
+@keyframes row {
+  0% {}
+
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+/* 调用动画 */
+.monitor .marquee {
+  /* //infinite永久调用动画 */
+  animation: row 10s linear infinite;
+}
+
+/*鼠标划入 停止动画  */
+.monitor .marquee:hover {
+  animation-play-state: paused;
+}
+
+/* 点位 */
+.point {
+  height: 14.167rem;
+}
+
+.point .chart {
+  display: flex;
+  margin-top: 1rem;
+  justify-content: space-between;
+}
+
+.point .pie,
+.current {
+  width: 13rem;
+  height: 10rem;
+  margin-left: -0.4rem;
+}
+
+.point .data {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 7rem;
+  padding: 1.5rem 1.25rem;
+  box-sizing: border-box;
+  background-image: url(../image/rect.png);
+  background-size: cover;
+}
+
+.point h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.167rem;
+  color: #fff;
+}
+
+.point span {
+  display: block;
+  color: #4c9bfd;
+  font-size: 0.667rem;
+}
+
+/* 监控 */
+
+
+.column h3 {
+  line-height: 1;
+  padding: 0.667rem 0;
+  margin: 0;
+  font-size: 0.833rem;
+  color: #fff;
+}
+
+.column .icon-cube {
+  color: #68d8fe;
+}
+
+.column .chart {
+  flex: 1;
+}
+
+.column .geo {
+  width: 100%;
+  height: 100%;
+}
+
+/* 统计模块 */
+.users {
+  height: 14rem;
+  margin-top: 1.5rem;
+}
+
+.users .chart {
+  display: flex;
+  margin-top: 0rem;
+}
+
+.users .bar {
+  width: 24.5rem;
+  height: 11rem;
+}
+
+.users .data {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 7rem;
+  padding: 1.5rem 1.25rem;
+  box-sizing: border-box;
+  background-image: url(../image/rect.png);
+  background-size: cover;
+}
+
+.users h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.167rem;
+  color: #fff;
+}
+
+.users span {
+  display: block;
+  color: #4c9bfd;
+  font-size: 0.667rem;
+}
+
+/* 订单 */
+.order {
+  height: 6.167rem;
+}
+
+.order .filter {
+  display: flex;
+}
+
+.order .filter a {
+  display: block;
+  height: 0.75rem;
+  line-height: 1;
+  padding: 0 0.75rem;
+  color: #1950c4;
+  font-size: 0.75rem;
+  border-right: 0.083rem solid #00f2f1;
+}
+
+.order .filter a:first-child {
+  padding-left: 0;
+}
+
+.order .filter a:last-child {
+  border-right: none;
+}
+
+.order .filter a.active {
+  color: #fff;
+  font-size: 0.833rem;
+}
+
+.order .data {
+  display: flex;
+  margin-top: 0.833rem;
+}
+
+.order .item {
+  width: 50%;
+}
+
+.order h4 {
+  font-size: 1.167rem;
+  color: #fff;
+  margin-bottom: 0.417rem;
+}
+
+.order span {
+  display: block;
+  color: #4c9bfd;
+  font-size: 0.667rem;
+}
+
+/* ratio区域 */
+.ratio {
+  height: 12rem;
+}
+
+.ratio .Area_ratio {
+  display: flex;
+  line-height: 1;
+}
+
+.ratio h3 {
+  height: 0.75rem;
+  padding-right: 0.75rem;
+  border-right: 0.083rem solid #00f2f1;
+}
+
+.ratio a {
+  padding: 0.167rem;
+  font-size: 0.667rem;
+  margin: -0.125rem 0 0 0.875rem;
+  border-radius: 0.125rem;
+  color: #0bace6;
+}
+
+.ratio a.active {
+  background-color: #4c9bfd;
+  color: #fff;
+}
+
+.ratio .inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.ratio .chart {
+  flex: 1;
+  padding-top: 0.6rem;
+  position: relative;
+}
+
+.ratio .label {
+  position: absolute;
+  left: 1.75rem;
+  top: 0.75rem;
+  color: #4996f5;
+  font-size: 0.583rem;
+}
+
+.ratio .ratioline {
+  width: 100%;
+  height: 100%;
+}
+
+/* track区域 */
+.track {
+  height: 12rem;
+}
+
+.track .trackk {
+  display: flex;
+  line-height: 1;
+}
+
+.track h3 {
+  height: 0.75rem;
+  padding-right: 0.75rem;
+  border-right: 0.083rem solid #00f2f1;
+}
+
+.track a {
+  padding: 0.167rem;
+  font-size: 0.667rem;
+  margin: -0.125rem 0 0 0.875rem;
+  border-radius: 0.125rem;
+  color: #0bace6;
+}
+
+.track a.active {
+  background-color: #4c9bfd;
+  color: #fff;
+}
+
+.track .inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.track .chart {
+  flex: 1;
+  padding-top: 0.6rem;
+  position: relative;
+}
+
+.track .label {
+  position: absolute;
+  left: 1.75rem;
+  top: 0.75rem;
+  color: #4996f5;
+  font-size: 0.583rem;
+}
+
+.track .trackline {
+  width: 100%;
+  height: 100%;
+}
+
+/* 假设视频容器所属的列（.column）具有宽度，例如50% */
+.column {
+  width: 50%;
+}
+
+/* 视频容器样式 */
+.video-container {
+  position: relative;
+  /* 确保内部元素相对于该容器定位 */
+  width: 100%;
+  /* 填充所属列的宽度 */
+  padding-bottom: 56.25%;
+  /* 16:9 比例的视频高度（高度占宽度的百分比）*/
+  overflow: hidden;
+  /* 防止视频溢出容器 */
+}
+
+/* 视频样式 */
+.video {
+  position: absolute;
+  /* 视频相对于容器进行定位 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* 视频宽度等于容器宽度 */
+  height: 100%;
+  /* 视频高度等于容器高度 */
+}
+
+.toggle-button,
+.delete-button {
+  padding: 1px 2px;
+  background-color: #006cff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+  font-size: 6px;
+}
+
+.delete-button {
+  background-color: #ed3f35;
+}
+
+
+
+.video-container {
+  position: relative;
+  display: inline-block;
+}
+
+#detectButton {
+  position: absolute;
+  bottom: 20px;
+  /* Adjust this value to change the vertical position of the button */
+  left: 50%;
+  /* Adjust this value to horizontally center the button */
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.logininput li {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.logininput li i {
+  flex: 0 0 auto;
+  margin-right: 10px;
+}
+
+.logininput li input {
+  flex: 1;
+}
+
+.mainContainer {
+  display: block;
+  max-width: 640px;
+  max-height: 480px;
+  margin: 0 auto;
+}
+
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 0;
+}
+
+.videoBox {
+  width: 320px;
+  height: 175px;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.centeredVideo {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.videoBox:hover {
+  transform: scale(1.05);
+}
+
+.centeredVideo {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.noMoreCameras {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 5px;
+  width: 100%;
+  height: 100%;
+}
+
+.pageButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pageButtons button {
+  background-color: #0074D9;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.pageButtons button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

@@ -8,13 +8,13 @@
           <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
             <!-- Iterate over sensor boards -->
 
+            <div>
+              <h2>上传文件</h2>
               <div>
-                <h2>上传文件</h2>
-                <div>
-                  <input type="file" @change="handleFileChange">
-                </div>
+                <input type="file" @change="handleFileChange">
               </div>
-            {{returnValue}}
+            </div>
+            {{ returnValue }}
           </div>
         </main>
       </div>
@@ -22,42 +22,13 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import axios from 'axios';
-
+import {postInocr} from '@/api/textin.js';
 const returnValue = ref([]);
 
 const handleFileChange = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.readAsArrayBuffer(file);
-
-  reader.onload = async () => {
-    const fileData = reader.result;
-    const appId = '5f5f8ee05ecefd5aab1d94658263594b'; // 应该从安全的地方获取
-    const secretCode = '7153f1ea7481d9a9b0468c36275e58a8'; // 应该从安全的地方获取
-    const url = 'https://api.textin.com/ai/service/v2/recognize';
-
-
-    try {
-      const response = await axios.post(url, fileData, {
-        headers: {
-          'x-ti-app-id': appId,
-          'x-ti-secret-code': secretCode,
-          'Content-Type': 'application/octet-stream'
-        }
-      });
-
-
-      if (response.data.result) {
-        returnValue.value = response.data.result || [];
-        console.log(returnValue.value, 'debug3');
-      }
-    } catch (error) {
-      console.error('上传失败', error);
-    }
-  };
+  returnValue.value=postInocr(event.target.files[0],'TXT')
 };
 </script>
 

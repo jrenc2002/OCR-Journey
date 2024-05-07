@@ -14,11 +14,19 @@ const routes: Array<RouteRecordRaw> = [
         path: '/mainview',
         name: 'MainView',
         meta: {
-          title: '显示界面',
-          permiss: '1',
+          title: '显示界面'
         },
         component: () => import(/* webpackChunkName: "login" */ '../views/MainView.vue'),
-      },]
+      },
+      {
+        path: '/tableview',
+        name: 'TableView',
+        meta: {
+          title: '表格识别'
+        },
+        component: () => import(/* webpackChunkName: "login" */ '../views/MainView.vue'),
+      },
+    ]
   },
 
 ]

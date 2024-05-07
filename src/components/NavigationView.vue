@@ -181,9 +181,7 @@ const initPagesValue = () => {
 
 const navigation = computed(() => [
     {name: '显示界面', href: '/mainview', icon: TvIcon, current: route.path === '/mainview'},
-    {name: '分析界面', href: '/analysisview', icon: ChartBarIcon, current: route.path === '/analysisview'},
-    {name: '设置界面', href: '/setiew', icon: Cog8ToothIcon, current: route.path === '/setiew'},
-    {name: '报警数据', href: '/alarmview', icon: ServerStackIcon, current: route.path === '/alarmview'}
+    {name: '表格识别', href: '/tableview', icon: ChartBarIcon, current: route.path === '/analysisview'},
 
 ])
 const showMenu = (event, deviceId) => {

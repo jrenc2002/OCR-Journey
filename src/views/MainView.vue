@@ -7,98 +7,60 @@
         <main class="flex  flex-1 flex-col gap-4 p-4 md:gap-8 md:p-1">
           <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
             <!-- Iterate over sensor boards -->
-            <template v-for="(sensorsBoard, index) in sensorBoards" :key="index">
-              <template v-if="index<4">
-                <div class="border text-card-foreground bg-white  shadow-md rounded-lg overflow-hidden ">
 
-                  <div class="flex flex-row items-center justify-between space-y-0 bg-[rgb(26,133,211)] dark:bg-gray-600 p-4"
-                       @dblclick="enableDeviceEdit(index)">
-                    <h3 class="tracking-tight text-sm font-medium text-white dark:text-gray-100">
-
-
-                      <template v-if="DeviceId == index">
-                        <input v-model="DeviceName[index]"
-                               class="text-lg font-bold w-full border-indigo-500 border-2 rounded-md text-gray-900 dark:text-gray-100"
-                               @keyup.enter="changeDeviceName(DeviceName[index], AppGlobal.pageChance)"/>
-                      </template>
-                      <template v-else>
-                        {{ DeviceName[index] }}
-                      </template>
-                    </h3>
-
-                  </div>
-                  <div class="px-4 py-2">
-                    <!-- Display each sensor in the current board -->
-                    <div v-for="(sensor, sensorIndex) in sensorsBoard" :key="sensor.device_id"
-                         :class="{'border-b': sensorIndex < sensorsBoard.length - 1, 'border-gray-300': sensorIndex < sensorsBoard.length - 1}"
-                         class="flex justify-between py-1 ">
-                      <h2 class="text-lg font-bold text-gray-900  w-[40%] relative"
-                          @dblclick="enableEditing(sensor)">
-                        <template v-if="editingSensorId === sensor.device_id">
-                          <input v-model="sensor.newName"
-                                 class="text-lg font-bold w-full border-indigo-500 border-2 rounded-md text-gray-900 dark:text-gray-100"
-                                 @keyup.enter="changeSensorName(sensor, AppGlobal.pageChance+1)"/>
-                        </template>
-                        <template v-else>
-                          {{ sensor.device_name }}
-                        </template>
-                      </h2>
-                      <p class="text-lg text-gray-700 dark:text-gray-300 flex-col flex w-[50%] relative ">
-
-                                        <span class="font-bold">振动值:
-                                          <span :key="sensor.current_data?.vibration_data"
-                                                :class="sensor.current_data.is_alerted?'text-orange-500':'text-black'"
-                                                class="animate-flip inline-block">
-                                            {{ sensor.current_data?.vibration_data }}
-                                          </span>  mm/s
-                                        </span>
-                        <span class="font-bold">温度值:
-                                          <span :key="sensor.current_data?.temperature_data"
-                                                :class="sensor.current_data.is_alerted?'text-orange-500':'text-black'"
-                                                class="animate-flip inline-block">
-                                            {{
-                                              parseFloat(sensor.current_data?.temperature_data) > 0.3 || parseFloat(sensor.current_data?.temperature_data) < -0.3 ? sensor.current_data?.temperature_data : 0
-                                            }}
-                                          </span>  °C
-                                        </span>
-                      </p>
-                    </div>
-                  </div>
-
-
+              <div>
+                <h2>上传文件</h2>
+                <div>
+                  <input type="file" @change="handleFileChange">
                 </div>
-              </template>
-            </template>
+              </div>
+            {{returnValue}}
           </div>
         </main>
       </div>
     </div>
   </div>
 </template>
-<script lang="ts" setup>
-import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
-import {useAppGlobal} from "@/store/AppGlobal";
+<script setup>
+import { ref } from 'vue';
+import axios from 'axios';
 
-const DeviceName = ref(["1号采集器", "2号采集器", "3号采集器", "4号采集器", "5号采集器", "6号采集器"])
-const DeviceId = ref(-1)
-const AppGlobal = useAppGlobal();
-const sensorBoardsRef = ref<any>([]);
-const sensorBoards = computed(() => sensorBoardsRef.value);
+const returnValue = ref([]);
+
+const handleFileChange = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.readAsArrayBuffer(file);
+
+  reader.onload = async () => {
+    const fileData = reader.result;
+    const appId = '5f5f8ee05ecefd5aab1d94658263594b'; // 应该从安全的地方获取
+    const secretCode = '7153f1ea7481d9a9b0468c36275e58a8'; // 应该从安全的地方获取
+    const url = 'https://api.textin.com/ai/service/v2/recognize';
 
 
+    try {
+      const response = await axios.post(url, fileData, {
+        headers: {
+          'x-ti-app-id': appId,
+          'x-ti-secret-code': secretCode,
+          'Content-Type': 'application/octet-stream'
+        }
+      });
 
 
-
-onMounted(() => {
-
-});
-
-
-onUnmounted(() => {
-
-});
-
+      if (response.data.result) {
+        returnValue.value = response.data.result || [];
+        console.log(returnValue.value, 'debug3');
+      }
+    } catch (error) {
+      console.error('上传失败', error);
+    }
+  };
+};
 </script>
+
 
 <style>
 @keyframes flip {

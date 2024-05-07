@@ -36,9 +36,9 @@ const handleFileChange = async (event) => {
 
     // 解析返回的文本，假设parseInocrTxt也是异步的且返回一个Promise
     const parsedText = await parseInocrTxt(postResult);
-
+    let  name='text1.txt'
     // 最后导出到TXT文件
-    exportToTxtFile(parsedText);
+    exportToTxtFile(parsedText,name);
   } catch (error) {
     console.error('Error handling file change:', error);
   }

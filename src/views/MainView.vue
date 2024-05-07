@@ -24,12 +24,26 @@
 <script setup>
 import {ref} from 'vue';
 import axios from 'axios';
-import {postInocr} from '@/api/textin.js';
+import  {postInocr,parseInocrTxt} from '@/api/textin.js';
+import {exportToTxtFile} from '@/export/txt.js';
 const returnValue = ref([]);
 
 const handleFileChange = async (event) => {
-  returnValue.value=postInocr(event.target.files[0],'TXT')
+  try {
+    // 确保使用await关键字等待异步操作完成
+    const postResult = await postInocr(event.target.files[0], 'TXT');
+    console.log(postResult, '2222');  // 这里假设postInocr返回的是处理后的文本
+
+    // 解析返回的文本，假设parseInocrTxt也是异步的且返回一个Promise
+    const parsedText = await parseInocrTxt(postResult);
+
+    // 最后导出到TXT文件
+    exportToTxtFile(parsedText);
+  } catch (error) {
+    console.error('Error handling file change:', error);
+  }
 };
+
 </script>
 
 

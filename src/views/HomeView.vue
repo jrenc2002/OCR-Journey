@@ -80,35 +80,6 @@ const updateWindowSize = () => {
 }
 
 
-// 使用 Vue3 的生命周期钩子函数 onMounted，在组件挂载完成后添加窗口大小变化的监听事件
-onMounted(() => {
-  console.log('___________________')
-  window.addEventListener('resize', updateWindowSize);
-  updateWindowSize();
-  window.Electron.ipcRenderer.invoke('init-db').then(
-    (res) => {
-      console.log(res);
-    }
-  );
-  if (!hasInitializedSensorsData) {
-    InitSensorsData();
-    hasInitializedSensorsData = true; // 设置标志为true
-  }
-  getAllData();
-
-
-});
-
-let hasInitializedSensorsData = false; // 外部标志
-
-const getAllData = () => {
-  const UPDATE_INTERVAL = 2000;
-
-
-
-  // 首次调用
-  setTimeout(updateData, 2000);
-}
 
 
 

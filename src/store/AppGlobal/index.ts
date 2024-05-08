@@ -14,6 +14,13 @@ const state = () => {
     selectedDeviceIndex: -1,
     // 侧边展开
     isDrawerState: true,
+    // 上传文件
+    file: {
+      fileName: '',
+      fileType: '',
+      uploadStatus: 0, //0是未上传，1是上传成功，2是上传未知格式
+      fileContent: null,
+    },
 
   }
 }

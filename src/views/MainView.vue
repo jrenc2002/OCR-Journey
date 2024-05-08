@@ -1,22 +1,24 @@
 <template>
   <div class="h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)] flex flex-col gap-2">
-    <div class="rounded-2xl bg-white w-full h-[12rem]  bottom-0 border  p-4 ">
+    <div class="rounded-2xl bg-white w-full h-[11rem]  bottom-0 border  p-4 ">
       <div class="flex flex-col w-full h-full gap-2">
-        <div class="w-full text-xl p-1 tracking-wide" >选择文件解析类型</div>
+        <div class="w-full text-xl p-1 tracking-wide">选择文件解析类型</div>
         <div class="w-full  gap-5 h-full flex overflow-auto">
-          <div class="relative w-[20%] max-w-[10rem]   h-full flex justify-center items-center rounded-2xl hover:cursor-pointer"
-               :class="temp.color"
-               v-for="(temp, index) in fileKinds"
-               :key="index"
-               @click="toggleCheckbox(temp)">
+          <div
+            v-for="(temp, index) in fileKinds"
+            :key="index"
+            :class="temp.color"
+            class="relative w-[20%] max-w-[10rem]   h-full flex justify-center items-center rounded-2xl hover:cursor-pointer"
+            @click.prevent="toggleCheckbox(temp)">
             <img :src="temp.icon" class="w-[25%]  ">
 
-            <div class="absolute right-3 bottom-3 hover:cursor-pointer cursor-pointer">
+            <div class="absolute right-3 bottom-3 hover:cursor-pointer cursor-pointer" @click.prevent="toggleCheckbox(temp)">
 
               <!-- 使用动态id，确保每个checkbox和label的对应关系 -->
-              <input :id="`cbx-${index}`" v-model="temp.checked" class="cursor-pointer" style="display: none;" type="checkbox">
-              <label :for="`cbx-${index}`" class="check cursor-pointer"   @click="toggleCheckbox(temp)" >
-                <svg height="1.3vw" width="1.3vw" class="max-h-[1.3rem] max-w-[1.3rem]" viewBox="0 0 18 18" >
+              <input :id="`cbx-${index}`" v-model="temp.checked" class="cursor-pointer" style="display: none;"
+                     type="checkbox">
+              <label :for="`cbx-${index}`" class="check cursor-pointer" @click.prevent="toggleCheckbox(temp)">
+                <svg class="max-h-[1.3rem] max-w-[1.3rem]" height="1.3vw" viewBox="0 0 18 18" width="1.3vw">
                   <path
                     d="M 1 9 L 1 9 c 0 -5 3 -8 8 -8 L 9 1 C 14 1 17 5 17 9 L 17 9 c 0 4 -4 8 -8 8 L 9 17 C 5 17 1 14 1 9 L 1 9 Z"></path>
                   <polyline points="1 9 7 14 15 4"></polyline>
@@ -28,15 +30,54 @@
         </div>
       </div>
     </div>
-    <div class="   w-full h-full bottom-0   flex flex-1 gap-2 ">
-      <div class="border rounded-2xl bg-white w-1/2 p-4">
+    <div class="   w-full h-[calc(100vh-15rem)] bottom-0   flex flex-1 gap-2 ">
+      <div class="border relative  rounded-2xl bg-white w-1/2 p-4 h-full ">
 
-        <div class="w-full text-xl p-1 tracking-wide" >文件预览</div>
-<!--        <pdf :src="pdfUrl" v-if="pdfUrl"></pdf>-->
+        <div class=" w-full h-[2.2rem] text-xl pb-1 tracking-wide  top-0">文件预览</div>
+        <div class="w-full h-[calc(100%-2.2rem)] overflow-auto">
+          <template v-if="AppGlobal.file.fileType === 'application/pdf'">
+            <vue-office-pdf
+              :src="fileUrl"
+            />
+          </template>
+          <template v-else-if="AppGlobal.file.fileType === 'image/png'">
+            <img :src="fileUrl" alt="Image Preview"/>
+          </template>
+          <template v-else-if="AppGlobal.file.fileType === 'image/jpeg'">
+            <img :src="fileUrl" alt="Image Preview"/>
+          </template>
+        </div>
+        <div class="z-50  absolute right-10 bottom-5">
+
+          <button>
+            <div class="svg-wrapper-1">
+              <div class="svg-wrapper">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                >
+                  <path fill="none" d="M0 0h24v24H0z"></path>
+                  <path
+                    fill="currentColor"
+                    d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+            <span class="text-xl tracking-wide">开始识别</span>
+          </button>
+
+
+        </div>
+
+
       </div>
       <div class="border rounded-2xl bg-white w-1/2 p-4">
 
-        <div class="w-full text-xl p-1 tracking-wide" >识别结果</div>
+
+        <div class="w-full h-[2.2rem] text-xl pb-1 tracking-wide  top-0">识别结果</div>
 
       </div>
     </div>
@@ -44,29 +85,48 @@
 </template>
 
 <script setup>
-import {ref, watch} from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import txtIcon from '../assets/image/TXT.svg';
 import csvIcon from '../assets/image/CSV.svg';
 import mdIcon from '../assets/image/MD.svg';
 import docxIcon from '../assets/image/DOCX.svg';
 import xslIcon from '../assets/image/XSL.svg';
-// import pdf from 'vue-pdf'
+import VueOfficePdf from '@vue-office/pdf'
 import {useAppGlobal} from "@/store/AppGlobal";
-const pdfUrl = ref(null);
+
+const fileUrl = ref();
 const AppGlobal = useAppGlobal()
-
-watch(AppGlobal.file.fileContent,()=>{
-  if (AppGlobal.file.fileType === "application/pdf") {
-
-  }
+onMounted(() => {
+  fileView()
 })
 
+watch(AppGlobal.file, () => {
+  fileView()
+})
+const fileView = () => {
+  console.log('fileContent', AppGlobal.file.fileContent)
+  if (AppGlobal.file.fileType === "application/pdf") {
+
+    let fileReader = new FileReader()
+    fileReader.readAsArrayBuffer(AppGlobal.file.fileContent)
+    fileReader.onload = () => {
+      fileUrl.value = fileReader.result
+    }
+  } else if (AppGlobal.file.fileType === "image/png" || AppGlobal.file.fileType === "image/jpeg") {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      fileUrl.value = e.target.result; // 将读取的结果赋值给imageUrl
+    };
+    reader.readAsDataURL(AppGlobal.file.fileContent); // 读取文件内容
+  }
+}
+
 const toggleCheckbox = (temp) => {
+  console.log('temp', temp)
   fileKinds.value.forEach((item) => {
     if (item.name !== temp.name) {
       item.checked = false;
-    }
-    else {
+    } else {
       item.checked = true;
     }
   })
@@ -148,13 +208,71 @@ input[type="checkbox"]:checked + .check svg {
 
 input[type="checkbox"]:checked + .check svg path {
   stroke-dashoffset: 60;
-  transition: all 0.3s linear;
+  transition: all 0.2s linear;
 }
 
 input[type="checkbox"]:checked + .check svg polyline {
   stroke-dashoffset: 42;
-  transition: all 0.2s linear;
-  transition-delay: 0.15s;
+  transition: all 0.1s linear;
+  transition-delay: 0.05s;
+}
+button {
+  font-family: inherit;
+  font-size: 20px;
+  background: royalblue;
+  color: white;
+  padding: 0.7em 1em;
+  padding-left: 0.9em;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+button span {
+  display: block;
+  margin-left: 0.3em;
+  transition: all 0.3s ease-in-out;
+}
+
+button svg {
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+
+}
+button:hover{
+  border: #b7b7b7;
+  box-shadow: 0px 15px 20px rgba(126, 174, 229, 0.58);
+}
+button:hover .svg-wrapper {
+  animation: fly-1 0.6s ease-in-out infinite alternate;
+
+}
+
+button:hover svg {
+  transform: translateX(2.2em) rotate(45deg) scale(1.1);
+}
+
+button:hover span {
+  transform: translateX(6em);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+@keyframes fly-1 {
+  from {
+    transform: translateY(0.1em);
+  }
+
+  to {
+    transform: translateY(-0.1em);
+  }
 }
 
 </style>

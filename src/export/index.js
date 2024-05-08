@@ -50,7 +50,7 @@ export function exportToDocxFile(data) {
 
 }
 //xsl
-export function exportToXslFile(base64String,fileName) {
+export function exportToXlsFile(base64String,fileName) {
   // 将 base64 编码的字符串转换为二进制数据
   const binaryString = window.atob(base64String);
   const len = binaryString.length;

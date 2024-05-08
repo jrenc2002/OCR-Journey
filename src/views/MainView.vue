@@ -78,12 +78,18 @@
 
 
         <div class="w-full h-[2.2rem] text-xl pb-1 tracking-wide  top-0">识别结果</div>
-        <div class="w-full h-[calc(100%-2.2rem)]  ">
-            <textarea v-if="AppGlobal.returnKind==='TXT'||AppGlobal.returnKind==='DOCX'" v-model="parsedValue"
+        <div class="w-full h-[calc(100%-2.2rem)] overflow-auto ">
+            <textarea v-if="AppGlobal.returnKind==='TXT'" v-model="parsedValue"
                       class="w-full min-h-full focus:border-indigo-50 focus:border p-3" placeholder="">
             </textarea>
-          <div class="text-xl" v-if="AppGlobal.returnKind==='CSV'||AppGlobal.returnKind==='XSL'" >
-            {{ parsedValue !==''?'数据已经返回，暂不支持预览，请点击右下角导出文件直接导出。':'正在识别中，请稍等..' }}
+          <div  v-if="AppGlobal.returnKind==='CSV'||AppGlobal.returnKind==='XLS'" >
+            <vue-office-excel
+              :src="excelUrl"
+            />
+
+          </div>
+          <div>
+
           </div>
         </div>
         <div class="z-50  absolute right-10 bottom-5">
@@ -121,16 +127,25 @@ import txtIcon from '../assets/image/TXT.svg';
 import csvIcon from '../assets/image/CSV.svg';
 import mdIcon from '../assets/image/MD.svg';
 import docxIcon from '../assets/image/DOCX.svg';
-import xslIcon from '../assets/image/XSL.svg';
+import xlsIcon from '../assets/image/XLS.svg';
 import VueOfficePdf from '@vue-office/pdf'
 import {useAppGlobal} from "@/store/AppGlobal";
-import {parseInocrCsv, parseInocrDocx, parseInocrMd, parseInocrTxt, parseInocrXsl, postInocr} from '@/api/textin.js';
-import {exportToCsvFile, exportToTxtFile, exportToXslFile} from '@/export';
-
+import {parseInocrCsv, parseInocrDocx, parseInocrMd, parseInocrTxt, parseInocrXls, postInocr} from '@/api/textin.js';
+import {exportToCsvFile, exportToTxtFile, exportToXlsFile} from '@/export';
+import VueOfficeExcel from '@vue-office/excel'
 const fileUrl = ref();
+const excelUrl = ref();
 const AppGlobal = useAppGlobal()
+const returnOCR = ref()
+const parsedValue = ref('')
 onMounted(() => {
   fileView()
+  let content = "<p>更新日志</p> <p>2024-5-9 2:12 初步完成了TXT,CSV,XLS的OCR功能</p> "
+  Swal.fire({
+    icon: 'info',
+    confirmButtonText: '确定',
+    html: content
+  })
 })
 
 watch(AppGlobal.file, () => {
@@ -153,7 +168,37 @@ const fileView = () => {
     reader.readAsDataURL(AppGlobal.file.fileContent); // 读取文件内容
   }
 }
+watch(parsedValue, () => {
+  returnView()
+})
+function base64ToBlob(baseContent) {
+  let mime = baseContent.match(/:(.*?);/) //获取分割后的base64前缀中的类型
+  let bstr = window.atob(baseContent)
+  let n = bstr.length
+  let u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new Blob([u8arr], { type: mime })
+}
 
+const returnView= () => {
+  if (AppGlobal.returnKind === 'TXT' || AppGlobal.returnKind === 'DOCX') {
+    return
+  } else
+  if (AppGlobal.returnKind === 'CSV' || AppGlobal.returnKind === 'XLS') {
+    if (parsedValue.value === '') {
+      Swal.fire({
+        text: '读取文件失败，请重新识别文件',
+        icon: 'warning',
+        confirmButtonText: '确定'
+      })
+      return
+    }
+    excelUrl.value=base64ToBlob(parsedValue.value)
+
+  }
+}
 const toggleCheckbox = (temp) => {
   console.log('temp', temp)
   fileKinds.value.forEach((item) => {
@@ -178,8 +223,8 @@ const fileKinds = ref([
     checked: false
   },
   {
-    name: 'XSL',
-    icon: xslIcon,
+    name: 'XLS',
+    icon: xlsIcon,
     color: 'bg-[rgb(250,240,243)] hover:bg-[rgb(230,220,223)]',
     checked: false
   },
@@ -196,8 +241,6 @@ const fileKinds = ref([
     checked: false
   }
 ])
-const returnOCR = ref()
-const parsedValue = ref('')
 // 开始识别文件
 const startOCR = async () => {
   // 检查是否选择文件解析类型,是否有文件存入
@@ -255,8 +298,8 @@ const parseFile = async (data) => {
         return parseInocrMd(data);
       case 'DOCX':
         return parseInocrDocx(data);
-      case 'XSL':
-        return parseInocrXsl(data);
+      case 'XLS':
+        return parseInocrXls(data);
       default:
         throw new Error('Invalid return kind');
     }
@@ -284,8 +327,8 @@ const exportFile = () => {
       case 'DOCX':
         exportDocxFile();
         break;
-      case 'XSL':
-        exportToXslFile(parsedValue.value, AppGlobal.file.fileName+'-ocr.xls');
+      case 'XLS':
+        exportToXlsFile(parsedValue.value, AppGlobal.file.fileName+'-ocr.xls');
         break;
       default:
         throw new Error('Invalid return kind');

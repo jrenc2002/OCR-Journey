@@ -3,7 +3,7 @@ const debug=true
 // 定义URL常量
 const URLS = {
   CSV: "https://api.textin.com/ai/service/v2/recognize/table?excel=1&table_type_hint=table_without_line",
-  XSL: "https://api.textin.com/ai/service/v2/recognize/table?excel=1&table_type_hint=table_without_line",
+  XLS: "https://api.textin.com/ai/service/v2/recognize/table?excel=1&table_type_hint=table_without_line",
   MD: "https://api.textin.com/ai/service/v2/recognize",
   TXT: "https://api.textin.com/ai/service/v2/recognize"
 };
@@ -110,7 +110,7 @@ export const parseInocrDocx= (data)=>{
 
   return resultText;
 }
-export const parseInocrXsl= (data)=>{
+export const parseInocrXls= (data)=>{
 
   return data.excel;
 }

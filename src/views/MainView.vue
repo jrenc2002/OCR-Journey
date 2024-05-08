@@ -83,6 +83,9 @@
             <textarea v-if="AppGlobal.returnKind==='TXT'||AppGlobal.returnKind==='DOCX'" v-model="parsedValue"
                       class="w-full min-h-full focus:border-indigo-50 focus:border p-3" placeholder="">
             </textarea>
+          <div class="text-xl" v-if="AppGlobal.returnKind==='CSV'||AppGlobal.returnKind==='XSL'" >
+            {{ parsedValue !==''?'数据已经返回，暂不支持预览，请点击右下角导出文件直接导出。':'正在识别中，请稍等..' }}
+          </div>
         </div>
         <div class="z-50  absolute right-10 bottom-5">
           <button class="button2">
@@ -123,7 +126,7 @@ import xslIcon from '../assets/image/XSL.svg';
 import VueOfficePdf from '@vue-office/pdf'
 import {useAppGlobal} from "@/store/AppGlobal";
 import {parseInocrCsv, parseInocrDocx, parseInocrMd, parseInocrTxt, parseInocrXsl, postInocr} from '@/api/textin.js';
-import {exportToTxtFile} from '@/export';
+import {exportToCsvFile, exportToTxtFile, exportToXslFile} from '@/export';
 
 const fileUrl = ref();
 const AppGlobal = useAppGlobal()
@@ -176,6 +179,12 @@ const fileKinds = ref([
     checked: false
   },
   {
+    name: 'XSL',
+    icon: xslIcon,
+    color: 'bg-[rgb(250,240,243)] hover:bg-[rgb(230,220,223)]',
+    checked: false
+  },
+  {
     name: 'MD',
     icon: mdIcon,
     color: 'bg-[rgb(234,240,249)] hover:bg-[rgb(214,220,229)]',
@@ -185,12 +194,6 @@ const fileKinds = ref([
     name: 'DOCX',
     icon: docxIcon,
     color: 'bg-[rgb(244,239,253)] hover:bg-[rgb(224,219,233)]',
-    checked: false
-  },
-  {
-    name: 'XSL',
-    icon: xslIcon,
-    color: 'bg-[rgb(250,240,243)] hover:bg-[rgb(230,220,223)]',
     checked: false
   }
 ])
@@ -229,7 +232,6 @@ const startOCR = async () => {
   returnOCR.value = await postFile(AppGlobal.file.fileContent);
   parsedValue.value = await parseFile(returnOCR.value);
 
-
 }
 
 const postFile = async (file) => {
@@ -267,6 +269,7 @@ const parseFile = async (data) => {
 };
 
 const exportFile = () => {
+  console.log(parsedValue.value,AppGlobal.returnKind)
   try {
     // 根据文件类型导出文件
     switch (AppGlobal.returnKind) {
@@ -274,7 +277,7 @@ const exportFile = () => {
         exportToTxtFile(parsedValue.value, AppGlobal.file.fileName+'-ocr.txt');
         break;
       case 'CSV':
-        exportCsvFile();
+        exportToCsvFile(parsedValue.value, AppGlobal.file.fileName+'-ocr.csv');
         break;
       case 'MD':
         exportMdFile();
@@ -283,7 +286,7 @@ const exportFile = () => {
         exportDocxFile();
         break;
       case 'XSL':
-        exportXslFile();
+        exportToXslFile(parsedValue.value, AppGlobal.file.fileName+'-ocr.xls');
         break;
       default:
         throw new Error('Invalid return kind');

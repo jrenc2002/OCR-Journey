@@ -2,7 +2,8 @@ import axios from "axios";
 const debug=true
 // 定义URL常量
 const URLS = {
-  TABLE: "https://api.textin.com/ai/service/v2/recognize",
+  CSV: "https://api.textin.com/ai/service/v2/recognize/table?excel=1&table_type_hint=table_without_line",
+  XSL: "https://api.textin.com/ai/service/v2/recognize/table?excel=1&table_type_hint=table_without_line",
   MD: "https://api.textin.com/ai/service/v2/recognize",
   TXT: "https://api.textin.com/ai/service/v2/recognize"
 };
@@ -76,19 +77,8 @@ export const parseInocrTxt= (data)=>{
 
 
 export const parseInocrCsv= (data)=>{
-  const lines = data.lines;
-  let resultText = "";
-  if (debug) {
-    console.log('parseInocrTxt data', data)
-    console.log('parseInocrTxt lines', lines)
-  }
-  // 遍历lines数组，每个元素代表文本行的识别结果
-  lines.forEach(line => {
-    // 使用text字段和其他可能的字段构建文本行
-    resultText += line.text + "\n"; // 添加每行识别的文本并换行
-  });
-
-  return resultText;
+  console.log('parseInocrCsv data', data)
+  return data.excel;
 }
 export const parseInocrMd= (data)=>{
   const lines = data.lines;
@@ -121,17 +111,6 @@ export const parseInocrDocx= (data)=>{
   return resultText;
 }
 export const parseInocrXsl= (data)=>{
-  const lines = data.lines;
-  let resultText = "";
-  if (debug) {
-    console.log('parseInocrTxt data', data)
-    console.log('parseInocrTxt lines', lines)
-  }
-  // 遍历lines数组，每个元素代表文本行的识别结果
-  lines.forEach(line => {
-    // 使用text字段和其他可能的字段构建文本行
-    resultText += line.text + "\n"; // 添加每行识别的文本并换行
-  });
 
-  return resultText;
+  return data.excel;
 }

@@ -20,24 +20,55 @@ export function exportToTxtFile(text, filename) {
 }
 
 // csv
-export function exportToCsvFile(data, filename) {
-  const csv = data.map(row => row.join(',')).join('\n');
-  exportToTxtFile(csv, filename);
+export function exportToCsvFile(base64String,fileName) {
+  // 将 base64 编码的字符串转换为二进制数据
+  const binaryString = window.atob(base64String);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  // 创建 Blob 对象
+  const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+  // 创建下载链接
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = fileName;
+  link.click();
+
+  // 释放对象 URL
+  window.URL.revokeObjectURL(link.href);
 }
 // md
-export function exportToMdFile(data, filename) {
-  const md = data.map(row => row.join(' | ')).join('\n');
-  exportToTxtFile(md, filename);
+export function exportToMdFile(data) {
+
 }
 // docx
-export function exportToDocxFile(data, filename) {
-  const docx = new Docxgen();
-  docx.load(data);
-  docx.save(filename);
+export function exportToDocxFile(data) {
+
 }
 //xsl
-export function exportToXslFile(data, filename) {
-  const xsl = new Xslgen();
-  xsl.load(data);
-  xsl.save(filename);
+export function exportToXslFile(base64String,fileName) {
+  // 将 base64 编码的字符串转换为二进制数据
+  const binaryString = window.atob(base64String);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  // 创建 Blob 对象
+  const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+  // 创建下载链接
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = fileName;
+  link.click();
+
+  // 释放对象 URL
+  window.URL.revokeObjectURL(link.href);
 }
+

@@ -12,7 +12,8 @@
             @click.prevent="toggleCheckbox(temp)">
             <img :src="temp.icon" class="w-[25%]  ">
 
-            <div class="absolute right-3 bottom-3 hover:cursor-pointer cursor-pointer" @click.prevent="toggleCheckbox(temp)">
+            <div class="absolute right-3 bottom-3 hover:cursor-pointer cursor-pointer"
+                 @click.prevent="toggleCheckbox(temp)">
 
               <!-- 使用动态id，确保每个checkbox和label的对应关系 -->
               <input :id="`cbx-${index}`" v-model="temp.checked" class="cursor-pointer" style="display: none;"
@@ -49,24 +50,24 @@
         </div>
         <div class="z-50  absolute right-10 bottom-5">
 
-          <button>
+          <button class="button" @click="startOCR">
             <div class="svg-wrapper-1">
               <div class="svg-wrapper">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  height="24"
                   viewBox="0 0 24 24"
                   width="24"
-                  height="24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path fill="none" d="M0 0h24v24H0z"></path>
+                  <path d="M0 0h24v24H0z" fill="none"></path>
                   <path
-                    fill="currentColor"
                     d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                    fill="currentColor"
                   ></path>
                 </svg>
               </div>
             </div>
-            <span class="text-xl tracking-wide">开始识别</span>
+            <span class=" tracking-wide">开始识别</span>
           </button>
 
 
@@ -74,17 +75,45 @@
 
 
       </div>
-      <div class="border rounded-2xl bg-white w-1/2 p-4">
+      <div class="border relative rounded-2xl bg-white w-1/2 p-4">
 
 
         <div class="w-full h-[2.2rem] text-xl pb-1 tracking-wide  top-0">识别结果</div>
+        <div class="w-full h-[calc(100%-2.2rem)]  ">
+            <textarea v-if="AppGlobal.returnKind==='TXT'||AppGlobal.returnKind==='DOCX'" v-model="parsedValue"
+                      class="w-full min-h-full focus:border-indigo-50 focus:border p-3" placeholder="">
+            </textarea>
+        </div>
+        <div class="z-50  absolute right-10 bottom-5">
+          <button class="button2">
 
+            <div class="svg-wrapper-1">
+              <div class="svg-wrapper">
+                <svg
+                  height="24"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M0 0h24v24H0z" fill="none"></path>
+                  <path
+                    d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+
+            <span class=" tracking-wide" @click="exportFile">导出文件</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import Swal from 'sweetalert2';
 import {onMounted, ref, watch} from 'vue'
 import txtIcon from '../assets/image/TXT.svg';
 import csvIcon from '../assets/image/CSV.svg';
@@ -93,6 +122,8 @@ import docxIcon from '../assets/image/DOCX.svg';
 import xslIcon from '../assets/image/XSL.svg';
 import VueOfficePdf from '@vue-office/pdf'
 import {useAppGlobal} from "@/store/AppGlobal";
+import {parseInocrCsv, parseInocrDocx, parseInocrMd, parseInocrTxt, parseInocrXsl, postInocr} from '@/api/textin.js';
+import {exportToTxtFile} from '@/export';
 
 const fileUrl = ref();
 const AppGlobal = useAppGlobal()
@@ -163,8 +194,106 @@ const fileKinds = ref([
     checked: false
   }
 ])
+const returnOCR = ref()
+const parsedValue = ref('')
+// 开始识别文件
+const startOCR = async () => {
+  // 检查是否选择文件解析类型,是否有文件存入
+  if (!AppGlobal.file.fileContent) {
+    Swal.fire({
+      text: '请上传文件',
+      icon: 'warning',
+      confirmButtonText: '确定'
+    })
+    return
+  }
+  if (fileKinds.value.filter((item) => item.checked).length === 0) {
+    Swal.fire({
+      text: '请选择文件解析类型',
+      icon: 'warning',
+      confirmButtonText: '确定'
+    })
+    return
+  }
+  if (fileKinds.value.filter((item) => item.checked).length > 1) {
+    Swal.fire({
+      text: '只能选择一种文件解析类型',
+      icon: 'warning',
+      confirmButtonText: '确定'
+    })
+    return
+  }
+  // 选择文件解析类型
+  AppGlobal.returnKind = fileKinds.value.filter((item) => item.checked)[0].name
+  // 向API上传文件
+  returnOCR.value = await postFile(AppGlobal.file.fileContent);
+  parsedValue.value = await parseFile(returnOCR.value);
 
 
+}
+
+const postFile = async (file) => {
+  try {
+    const result = await postInocr(file, AppGlobal.returnKind);
+    return result;
+  } catch (error) {
+    console.error('Error post file:', error);
+    throw error; // 抛出错误以便外部调用处理
+  }
+};
+
+const parseFile = async (data) => {
+  try {
+    // 根据returnKind匹配不同的解析方式
+    switch (AppGlobal.returnKind) {
+      case 'TXT':
+        return parseInocrTxt(data);
+      case 'CSV':
+        return parseInocrCsv(data);
+      case 'MD':
+        return parseInocrMd(data);
+      case 'DOCX':
+        return parseInocrDocx(data);
+      case 'XSL':
+        return parseInocrXsl(data);
+      default:
+        throw new Error('Invalid return kind');
+    }
+
+  } catch (error) {
+    console.error('Error parsing file:', error);
+    throw error; // 抛出错误以便外部调用处理
+  }
+};
+
+const exportFile = () => {
+  try {
+    // 根据文件类型导出文件
+    switch (AppGlobal.returnKind) {
+      case 'TXT':
+        exportToTxtFile(parsedValue.value, AppGlobal.file.fileName+'-ocr.txt');
+        break;
+      case 'CSV':
+        exportCsvFile();
+        break;
+      case 'MD':
+        exportMdFile();
+        break;
+      case 'DOCX':
+        exportDocxFile();
+        break;
+      case 'XSL':
+        exportXslFile();
+        break;
+      default:
+        throw new Error('Invalid return kind');
+    }
+
+  } catch (error) {
+    console.error('Error exporting file:', error);
+    throw error; // 抛出错误以便外部调用处理
+  }
+};
 </script>
 
 
@@ -216,56 +345,123 @@ input[type="checkbox"]:checked + .check svg polyline {
   transition: all 0.1s linear;
   transition-delay: 0.05s;
 }
-button {
+
+.button {
   font-family: inherit;
-  font-size: 20px;
-  background: royalblue;
+  font-size: 16px;
+  background: #1875FF;
   color: white;
   padding: 0.7em 1em;
   padding-left: 0.9em;
   display: flex;
   align-items: center;
   border: none;
-  border-radius: 16px;
+  border-radius: 7px;
   overflow: hidden;
   transition: all 0.2s;
   cursor: pointer;
+  box-shadow: 0px 14px 56px -11px #1875FF;
 }
 
-button span {
+.button span {
   display: block;
   margin-left: 0.3em;
   transition: all 0.3s ease-in-out;
 }
 
-button svg {
+.button svg {
   display: block;
   transform-origin: center center;
   transition: transform 0.3s ease-in-out;
 
 }
-button:hover{
+
+.button:hover {
   border: #b7b7b7;
-  box-shadow: 0px 15px 20px rgba(126, 174, 229, 0.58);
 }
-button:hover .svg-wrapper {
+
+.button:hover .svg-wrapper {
   animation: fly-1 0.6s ease-in-out infinite alternate;
 
 }
 
-button:hover svg {
+.button:hover svg {
   transform: translateX(2.2em) rotate(45deg) scale(1.1);
 }
 
-button:hover span {
+.button:hover span {
   transform: translateX(6em);
 }
 
-button:active {
+.button:active {
   transform: scale(0.95);
 }
 
 @keyframes fly-1 {
+  from {
+    transform: translateY(0.1em);
+  }
+
+  to {
+    transform: translateY(-0.1em);
+  }
+}
+
+.swal2-popup {
+  border-radius: 20px;
+}
+.button2 {
+  font-family: inherit;
+  font-size: 16px;
+  background: #1875FF;
+  color: white;
+  padding: 0.7em 1em;
+  padding-left: 0.9em;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 7px;
+  overflow: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+  box-shadow: 0px 14px 56px -11px #1875FF;
+}
+
+.button2 span {
+  display: block;
+  margin-left: 0.3em;
+  transition: all 0.3s ease-in-out;
+}
+
+.button2 svg {
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+
+}
+
+.button2:hover {
+  border: #b7b7b7;
+}
+
+.button2:hover .svg-wrapper {
+  animation: fly-2 0.6s ease-in-out infinite alternate;
+
+}
+
+.button2:hover svg {
+  transform: translateX(4.5em) rotate(20deg) scale(1.1);
+}
+
+.button2:hover span {
+  transform: translateX(-1.5rem);
+}
+
+.button2:active {
+  transform: scale(0.95);
+}
+
+@keyframes fly-2 {
   from {
     transform: translateY(0.1em);
   }

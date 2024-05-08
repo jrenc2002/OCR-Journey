@@ -1,4 +1,4 @@
-export function exportToTxtFile(text, filename = 'exported-text.txt') {
+export function exportToTxtFile(text, filename) {
   // 创建一个新的Blob对象，其中包含文本内容，设置类型为text/plain
   const blob = new Blob([text], { type: 'text/plain' });
 
@@ -19,3 +19,25 @@ export function exportToTxtFile(text, filename = 'exported-text.txt') {
   URL.revokeObjectURL(fileUrl);
 }
 
+// csv
+export function exportToCsvFile(data, filename) {
+  const csv = data.map(row => row.join(',')).join('\n');
+  exportToTxtFile(csv, filename);
+}
+// md
+export function exportToMdFile(data, filename) {
+  const md = data.map(row => row.join(' | ')).join('\n');
+  exportToTxtFile(md, filename);
+}
+// docx
+export function exportToDocxFile(data, filename) {
+  const docx = new Docxgen();
+  docx.load(data);
+  docx.save(filename);
+}
+//xsl
+export function exportToXslFile(data, filename) {
+  const xsl = new Xslgen();
+  xsl.load(data);
+  xsl.save(filename);
+}

@@ -2,11 +2,11 @@
   <div class="flex grow flex-col gap-y-5 h-full  px-2  pt-2">
 
     <nav class="flex flex-1 flex-col ">
-      <ul class="flex flex-1 flex-col " role="list">
+      <ul class="flex flex-1 flex-col h-full " role="list">
 
-        <li >
+        <li class="h-full" >
           <!-- 页面列表部分 -->
-          <div class="  h-[94vh] rounded-2xl">
+          <div class="  h-full rounded-2xl">
             <!-- 主体内容 -->
             <main class="flex flex-1 flex-col gap-4  md:gap-8  h-full">
               <div v-if="AppGlobal.file.uploadStatus===1" class="absolute z-10 bg-gray-200 p-1 rounded-3xl right-2 m-2 hover:bg-gray-300 hover:cursor-pointer" @click="deleteFile()">
@@ -190,7 +190,7 @@
                     </div>
                   </div>
                   <div :class="[AppGlobal.file.uploadStatus===2?'text-red-800':'']"
-                       class="my-1 self-stretch text-zinc-600 text-xs font-normal font-['Inter'] leading-none transition-all" >
+                       class="my-3 self-stretch text-zinc-600 text-[1rem] text-xs font-normal font-['Inter'] leading-none transition-all" >
                     {{ AppGlobal.file.uploadStatus === 2 ? '请输入正确的文件类型哦！' : ' 支持PNG, JPG, PDF格式' }}
 
                   </div>

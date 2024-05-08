@@ -1,38 +1,38 @@
 <template>
-  <div class="flex grow flex-col gap-y-5 h-full  px-6  pt-4">
+  <div class="flex grow flex-col gap-y-5 h-full  px-2  pt-2">
 
     <nav class="flex flex-1 flex-col ">
-      <ul class="flex flex-1 flex-col gap-y-4" role="list">
-        <li>
-          <ul class="-mx-2 space-y-1" role="list">
-            <li v-for="item in navigation" :key="item.name">
-              <router-link
-                :class="[item.current ? 'bg-white text-[#1EA5FC] shadow' : 'text-gray-700 hover:text-[#1EA5FC] hover:bg-white hover:shadow', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']"
-                :to="item.href">
-                <component :is="item.icon"
-                           :class="[item.current ? 'text-[#1EA5FC]' : 'text-gray-400 group-hover:text-[#1EA5FC]', 'h-6 w-6 shrink-0']"
-                           aria-hidden="true"/>
-                {{ item.name }}
-                <span v-if="item.count"
-                      aria-hidden="true"
-                      class="ml-auto w-9 min-w-max whitespace-nowrap rounded-full bg-white px-2.5 py-0.5 text-center text-xs font-medium leading-5 text-gray-600 ring-1 ring-inset ring-gray-200">{{
-                    item.count
-                  }}</span>
-              </router-link>
-            </li>
-          </ul>
-        </li>
+      <ul class="flex flex-1 flex-col " role="list">
+<!--        <li>-->
+<!--          <ul class="-mx-2 space-y-1" role="list">-->
+<!--            <li v-for="item in navigation" :key="item.name">-->
+<!--              <router-link-->
+<!--                :class="[item.current ? 'bg-white text-[#1EA5FC] shadow' : 'text-gray-700 hover:text-[#1EA5FC] hover:bg-white hover:shadow', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']"-->
+<!--                :to="item.href">-->
+<!--                <component :is="item.icon"-->
+<!--                           :class="[item.current ? 'text-[#1EA5FC]' : 'text-gray-400 group-hover:text-[#1EA5FC]', 'h-6 w-6 shrink-0']"-->
+<!--                           aria-hidden="true"/>-->
+<!--                {{ item.name }}-->
+<!--                <span v-if="item.count"-->
+<!--                      aria-hidden="true"-->
+<!--                      class="ml-auto w-9 min-w-max whitespace-nowrap rounded-full bg-white px-2.5 py-0.5 text-center text-xs font-medium leading-5 text-gray-600 ring-1 ring-inset ring-gray-200">{{-->
+<!--                    item.count-->
+<!--                  }}</span>-->
+<!--              </router-link>-->
+<!--            </li>-->
+<!--          </ul>-->
+<!--        </li>-->
         <li >
-          <div class="relative py-4">
-            <div aria-hidden="true" class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-gray-300"/>
-            </div>
-          </div>
+<!--          <div class="relative py-4">-->
+<!--            <div aria-hidden="true" class="absolute inset-0 flex items-center">-->
+<!--              <div class="w-full border-t border-gray-300"/>-->
+<!--            </div>-->
+<!--          </div>-->
           <!-- 页面列表部分 -->
-          <div class="  h-[75vh] rounded-xl">
+          <div class="  h-[94vh] rounded-2xl">
             <!-- 主体内容 -->
             <main class="flex flex-1 flex-col gap-4  md:gap-8  h-full">
-              <div v-if="AppGlobal.file.uploadStatus===1" class="absolute z-10 bg-gray-200 p-1 rounded-3xl right-6 m-2 hover:bg-gray-300 hover:cursor-pointer" @click="deleteFile()">
+              <div v-if="AppGlobal.file.uploadStatus===1" class="absolute z-10 bg-gray-200 p-1 rounded-3xl right-2 m-2 hover:bg-gray-300 hover:cursor-pointer" @click="deleteFile()">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 4.7L11.3 4L8 7.3L4.7 4L4 4.7L7.3 8L4 11.3L4.7 12L8 8.7L11.3 12L12 11.3L8.7 8L12 4.7Z" fill="#19161D"/>
                 </svg>
@@ -46,7 +46,7 @@
                 >
                   <div
                     :class="[AppGlobal.file.uploadStatus===2?'border-red-800 bg-red-100':'border-blue-800',AppGlobal.file.fileType==='image/jpeg'?'bg-[#D8F1D7]':'',AppGlobal.file.fileType==='image/png'?'bg-[#E1ECFA]':'',AppGlobal.file.fileType==='application/pdf'?'bg-[#FFEFF0]':'',]"
-                    class="  w-full relative self-stretch grow shrink transition-colors basis-0 bg-white rounded-lg border border-indigo-50 flex-col justify-center items-center gap-2 flex">
+                    class="  w-full relative self-stretch grow shrink transition-colors basis-0 bg-white rounded-xl border border-indigo-50 flex-col justify-center items-center gap-2 flex">
                     <div class="flex-col justify-center items-center gap-1.5 flex">
                       <div v-if="AppGlobal.file.uploadStatus===1">
                         <div class="flex flex-col  justify-center items-center gap-1">
@@ -195,7 +195,7 @@
                         <div class="text-zinc-900 text-xs font-normal font-['Inter'] leading-none h-[1.5rem] justify-center items-center flex">拖拽文件到这里</div>
                         <div class="text-zinc-500 text-xs font-normal font-['Inter'] leading-none h-[1.5rem] justify-center items-center flex">或</div>
                         <div
-                          class="h-7 px-2 py-1 bg-zinc-900 rounded-[7px] justify-center items-center gap-1.5 inline-flex  justify-center items-center ">
+                          class="h-7 px-2 py-2 mt-1 bg-zinc-900 rounded-[7px] justify-center items-center gap-1.5 inline-flex  justify-center items-center ">
                           <div
                             class="text-white text-xs font-normal font-['Inter'] leading-none cursor-pointer"
                             @click="triggerFileInput"
@@ -214,7 +214,7 @@
                   </div>
                   <div :class="[AppGlobal.file.uploadStatus===2?'text-red-800':'']"
                        class="my-1 self-stretch text-zinc-600 text-xs font-normal font-['Inter'] leading-none transition-all" >
-                    {{ AppGlobal.file.uploadStatus === 2 ? '请输入正确的文件类型哦！' : ' 支持PNG, JPEG, PDF格式' }}
+                    {{ AppGlobal.file.uploadStatus === 2 ? '请输入正确的文件类型哦！' : ' 支持PNG, JPG, PDF格式' }}
 
                   </div>
                 </div>

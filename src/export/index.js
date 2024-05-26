@@ -22,30 +22,7 @@ export function exportToTxtFile(text, filename) {
     URL.revokeObjectURL(fileUrl);
 }
 
-// csv
-export function exportToCsvFile(base64String,fileName) {
-    // 将 base64 编码的字符串转换为二进制数据
-    const binaryString = window.atob(base64String);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
 
-    for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-
-    // 创建 Blob 对象
-    const blob = new Blob([bytes], { 'type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-    // 创建下载链接
-    const link = document.createElement('a');
-
-    link.href = window.URL.createObjectURL(blob);
-    link.download = fileName;
-    link.click();
-
-    // 释放对象 URL
-    window.URL.revokeObjectURL(link.href);
-}
 // md
 
 // docx
@@ -86,7 +63,45 @@ export function exportToXlsFile(base64String,fileName) {
     // 释放对象 URL
     window.URL.revokeObjectURL(link.href);
 }
+// csv
+import * as XLSX from 'xlsx';
 
+export function exportToCsvFile(base64String, fileName) {
+  // 将 base64 编码的字符串转换为二进制数据
+  const binaryString = window.atob(base64String);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  // 将二进制数据转换为 Excel 工作簿
+  const workbook = XLSX.read(bytes, { type: 'array' });
+
+  // 获取第一个工作表
+  const firstSheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[firstSheetName];
+
+  // 将工作表转换为 CSV
+  const csv = XLSX.utils.sheet_to_csv(worksheet);
+
+  // 创建 Blob 对象
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+
+  // 创建下载链接
+  const link = document.createElement('a');
+  if (link.download !== undefined) {
+    // 设置下载链接
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}
 
 
 export function exportToMDFile(base64Content, fileName) {

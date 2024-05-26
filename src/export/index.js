@@ -47,9 +47,7 @@ export function exportToCsvFile(base64String,fileName) {
     window.URL.revokeObjectURL(link.href);
 }
 // md
-export function exportToMdFile(data) {
 
-}
 // docx
 export function exportToDocxFile(base64Content, fileName) {
     const byteCharacters = atob(base64Content);
@@ -88,4 +86,17 @@ export function exportToXlsFile(base64String,fileName) {
     // 释放对象 URL
     window.URL.revokeObjectURL(link.href);
 }
+
+
+
+export function exportToMDFile(base64Content, fileName) {
+      console.log(base64Content)
+      const blob = new Blob([base64Content], { type: 'text/markdown;charset=utf-8' });
+      saveAs(blob, fileName);
+      console.log('Conversion completed');
+}
+
+
+// 示例调用方式
+// exportToDocxFile('<your-base64-content>', 'output.md');
 

@@ -79,9 +79,9 @@
 
         <div class="w-full h-[2.2rem] text-xl pb-1 tracking-wide  top-0">识别结果 <span class="text-sm text-gray-500 ml-2">  识别预览仅供参考，请以实际导出效果为准</span></div>
         <div class="w-full h-[calc(100%-2.2rem)] overflow-hidden relative">
-    <textarea v-if="AppGlobal.returnKind==='TXT'" v-model="parsedValue"
-              class="w-full min-h-full focus:border-indigo-50 focus:border p-3" placeholder="">
-    </textarea>
+          <textarea v-if="AppGlobal.returnKind==='TXT'" v-model="parsedValue"
+                    class="w-full min-h-full focus:border-indigo-50 focus:border p-3" placeholder="">
+          </textarea>
           <div v-if="AppGlobal.returnKind==='CSV'||AppGlobal.returnKind==='XLS'">
             <vue-office-excel :src="excelUrl"/>
           </div>
@@ -91,6 +91,10 @@
                 <vue-office-docx class="w-full inline-block" :src="docxUrl"/>
               </div>
             </div>
+          </div>
+          <div v-if="AppGlobal.returnKind==='MD'" class="relative w-full h-full overflow-auto">
+
+            <div v-html="decodedMarkdown"></div>
           </div>
         </div>
         <div class="z-50  absolute right-10 bottom-5">
@@ -132,7 +136,7 @@ import xlsIcon from '../assets/image/XLS.svg';
 import VueOfficePdf from '@vue-office/pdf';
 import {useAppGlobal} from '@/store/AppGlobal';
 import {parseInocrCsv, parseInocrDocx, parseInocrMd, parseInocrTxt, parseInocrXls, postInocr} from '@/api/textin.js';
-import {exportToCsvFile, exportToTxtFile, exportToXlsFile,exportToDocxFile} from '@/export';
+import {exportToCsvFile, exportToTxtFile, exportToXlsFile, exportToDocxFile, exportToMDFile} from '@/export';
 import VueOfficeExcel from '@vue-office/excel';
 import VueOfficeDocx from '@vue-office/docx';
 const fileUrl = ref();
@@ -141,16 +145,17 @@ const docxUrl=ref();
 const AppGlobal = useAppGlobal();
 const returnOCR = ref();
 const parsedValue = ref('');
+const decodedMarkdown = ref('');
 
 onMounted(() => {
     fileView();
-    let content = '<p>更新日志</p> <p>2024-5-9 2:12 初步完成了TXT,CSV,XLS的OCR功能</p> ';
+    // let content = '<p>更新日志</p> <p>2024-5-9 2:12 初步完成了TXT,CSV,XLS,Word,MD的OCR功能</p> ';
 
-    Swal.fire({
-        'icon': 'info',
-        'confirmButtonText': '确定',
-        'html': content
-    });
+    // Swal.fire({
+    //     'icon': 'info',
+    //     'confirmButtonText': '确定',
+    //     'html': content
+    // });
 });
 
 watch(AppGlobal.file, () => {
@@ -191,33 +196,40 @@ function base64ToBlob(baseContent) {
     return new Blob([u8arr], { 'type': mime });
 }
 
-const returnView= () => {
-    if (AppGlobal.returnKind === 'TXT') {
-
-    } else
-    if (AppGlobal.returnKind === 'DOCX') {
-        if (parsedValue.value === '') {
-            Swal.fire({
-                'text': '读取文件失败，请重新识别文件',
-                'icon': 'warning',
-                'confirmButtonText': '确定'
-            });
-            return;
-        }
-        docxUrl.value=base64ToBlob(parsedValue.value);
-    } else
-    if (AppGlobal.returnKind === 'CSV' || AppGlobal.returnKind === 'XLS') {
-        if (parsedValue.value === '') {
-            Swal.fire({
-                'text': '读取文件失败，请重新识别文件',
-                'icon': 'warning',
-                'confirmButtonText': '确定'
-            });
-            return;
-        }
-        excelUrl.value=base64ToBlob(parsedValue.value);
-
+const returnView = () => {
+  if (AppGlobal.returnKind === 'TXT') {
+    // 处理 TXT 文件的逻辑
+  } else if (AppGlobal.returnKind === 'DOCX') {
+    if (parsedValue.value === '') {
+      Swal.fire({
+        'text': '读取文件失败，请重新识别文件',
+        'icon': 'warning',
+        'confirmButtonText': '确定'
+      });
+      return;
     }
+    docxUrl.value = base64ToBlob(parsedValue.value);
+  } else if (AppGlobal.returnKind === 'CSV' || AppGlobal.returnKind === 'XLS') {
+    if (parsedValue.value === '') {
+      Swal.fire({
+        'text': '读取文件失败，请重新识别文件',
+        'icon': 'warning',
+        'confirmButtonText': '确定'
+      });
+      return;
+    }
+    excelUrl.value = base64ToBlob(parsedValue.value);
+  } else if (AppGlobal.returnKind === 'MD') {
+    if (parsedValue.value === '') {
+      Swal.fire({
+        'text': '读取文件失败，请重新识别文件',
+        'icon': 'warning',
+        'confirmButtonText': '确定'
+      });
+      return;
+    }
+    decodedMarkdown.value = parsedValue.value;
+  }
 };
 const toggleCheckbox = (temp) => {
     console.log('temp', temp);
@@ -312,15 +324,15 @@ const parseFile = async (data) => {
     // 根据returnKind匹配不同的解析方式
         switch (AppGlobal.returnKind) {
         case 'TXT':
-            return parseInocrTxt(data);
+            return await parseInocrTxt(data);
         case 'CSV':
-            return parseInocrCsv(data);
+            return await parseInocrCsv(data);
         case 'MD':
-            return parseInocrMd(data);
+            return await parseInocrMd(data);
         case 'DOCX':
-            return parseInocrDocx(data);
+            return await parseInocrDocx(data);
         case 'XLS':
-            return parseInocrXls(data);
+            return await parseInocrXls(data);
         default:
             throw new Error('Invalid return kind');
         }
@@ -342,7 +354,7 @@ const exportFile = () => {
             exportToCsvFile(parsedValue.value, AppGlobal.file.fileName+'-ocr.csv');
             break;
         case 'MD':
-            exportMdFile();
+            exportToMDFile(parsedValue.value, AppGlobal.file.fileName+'-ocr.md');
             break;
         case 'DOCX':
             exportToDocxFile(parsedValue.value, AppGlobal.file.fileName + '-ocr.docx');

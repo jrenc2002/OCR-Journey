@@ -6,7 +6,7 @@ const debug=true;
 const URLS = {
     'CSV': 'https://api.textin.com/ai/service/v2/recognize/table?excel=1&table_type_hint=table_without_line',
     'XLS': 'https://api.textin.com/ai/service/v2/recognize/table?excel=1&table_type_hint=table_without_line',
-    'MD': 'https://api.textin.com/ai/service/v2/recognize',
+    'MD': 'https://api.textin.com/robot/v1.0/api/doc_restore',
     'TXT': 'https://api.textin.com/ai/service/v2/recognize',
     'DOCX':'https://api.textin.com/robot/v1.0/api/doc_restore'
 };
@@ -110,21 +110,39 @@ export const parseInocrCsv= (data)=>{
     console.log('parseInocrCsv data', data);
     return data.excel;
 };
-export const parseInocrMd= (data)=>{
-    const lines = data.lines;
-    let resultText = '';
+import * as mammoth from 'mammoth';
+import TurndownService from 'turndown';
+import { gfm } from 'turndown-plugin-gfm';
+import { fromByteArray, toByteArray } from 'base64-js';
 
-    if (debug) {
-        console.log('parseInocrTxt data', data);
-        console.log('parseInocrTxt lines', lines);
-    }
-    // 遍历lines数组，每个元素代表文本行的识别结果
-    lines.forEach(line => {
-    // 使用text字段和其他可能的字段构建文本行
-        resultText += line.text + '\n'; // 添加每行识别的文本并换行
-    });
+async function convertBase64WordToMd(base64Content) {
+  const bytes = toByteArray(base64Content);
+  const arrayBuffer = bytes.buffer;
+  const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+  const turndownService = new TurndownService();
+  turndownService.use(gfm); // 使用 GitHub 风格的 Markdown 插件
+  const markdown = turndownService.turndown(result.value);
+  return new TextEncoder().encode(markdown);
+}
+export const parseInocrMd= async (data) => {
+  const rawData = toRaw(data); // 将响应式对象转换为普通对象
 
-    return resultText;
+  if (!rawData || !rawData.docx) {
+    console.error('Invalid response data');
+    console.log('parseInocrDocx raw data', rawData); // 打印 rawData 以便调试
+    return '';
+  }
+
+  const base64Docx = rawData.docx;
+
+  const bytes = toByteArray(base64Docx);
+  const arrayBuffer = bytes.buffer;
+  const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+  const turndownService = new TurndownService();
+  turndownService.use(gfm); // 使用 GitHub 风格的 Markdown 插件
+  const markdown = turndownService.turndown(result.value);
+  return new TextDecoder().decode(new TextEncoder().encode(markdown));
+
 };
 
 export const parseInocrXls= (data)=>{

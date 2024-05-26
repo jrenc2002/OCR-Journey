@@ -8,9 +8,6 @@ module.exports = defineConfig({
         "util": require.resolve("util/"),
         "fs": false
       }
-    },
-    plugins: [
-      new NodePolyfillPlugin()
-    ]
+    }
   }
 })

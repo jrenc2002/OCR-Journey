@@ -197,39 +197,39 @@ function base64ToBlob(baseContent) {
 }
 
 const returnView = () => {
-  if (AppGlobal.returnKind === 'TXT') {
+    if (AppGlobal.returnKind === 'TXT') {
     // 处理 TXT 文件的逻辑
-  } else if (AppGlobal.returnKind === 'DOCX') {
-    if (parsedValue.value === '') {
-      Swal.fire({
-        'text': '读取文件失败，请重新识别文件',
-        'icon': 'warning',
-        'confirmButtonText': '确定'
-      });
-      return;
+    } else if (AppGlobal.returnKind === 'DOCX') {
+        if (parsedValue.value === '') {
+            Swal.fire({
+                'text': '读取文件失败，请重新识别文件',
+                'icon': 'warning',
+                'confirmButtonText': '确定'
+            });
+            return;
+        }
+        docxUrl.value = base64ToBlob(parsedValue.value);
+    } else if (AppGlobal.returnKind === 'CSV' || AppGlobal.returnKind === 'XLS') {
+        if (parsedValue.value === '') {
+            Swal.fire({
+                'text': '读取文件失败，请重新识别文件',
+                'icon': 'warning',
+                'confirmButtonText': '确定'
+            });
+            return;
+        }
+        excelUrl.value = base64ToBlob(parsedValue.value);
+    } else if (AppGlobal.returnKind === 'MD') {
+        if (parsedValue.value === '') {
+            Swal.fire({
+                'text': '读取文件失败，请重新识别文件',
+                'icon': 'warning',
+                'confirmButtonText': '确定'
+            });
+            return;
+        }
+        decodedMarkdown.value = parsedValue.value;
     }
-    docxUrl.value = base64ToBlob(parsedValue.value);
-  } else if (AppGlobal.returnKind === 'CSV' || AppGlobal.returnKind === 'XLS') {
-    if (parsedValue.value === '') {
-      Swal.fire({
-        'text': '读取文件失败，请重新识别文件',
-        'icon': 'warning',
-        'confirmButtonText': '确定'
-      });
-      return;
-    }
-    excelUrl.value = base64ToBlob(parsedValue.value);
-  } else if (AppGlobal.returnKind === 'MD') {
-    if (parsedValue.value === '') {
-      Swal.fire({
-        'text': '读取文件失败，请重新识别文件',
-        'icon': 'warning',
-        'confirmButtonText': '确定'
-      });
-      return;
-    }
-    decodedMarkdown.value = parsedValue.value;
-  }
 };
 const toggleCheckbox = (temp) => {
     console.log('temp', temp);
@@ -277,7 +277,7 @@ const fileKinds = ref([
 const startOCR = async () => {
     // 检查是否选择文件解析类型,是否有文件存入
     if (!AppGlobal.file.fileContent) {
-        Swal.fire({
+        await Swal.fire({
             'text': '请上传文件',
             'icon': 'warning',
             'confirmButtonText': '确定'

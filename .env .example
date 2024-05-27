@@ -1,0 +1,5 @@
+# 这个TextIn的账号和密钥，出于演示功能我们将其放在这里，实际开发中可以使用自己密钥
+# https://www.textin.com/ 申请账号地址
+VUE_APP_APP_ID=########
+VUE_APP_SECRET_CODE=########
+```

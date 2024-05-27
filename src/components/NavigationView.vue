@@ -207,79 +207,79 @@
 </template>
 
 <script lang="js" setup>
-import {useRoute} from 'vue-router'
-import {computed, ref} from 'vue'
-import {ChartBarIcon, TvIcon} from '@heroicons/vue/24/outline'
-import {useAppGlobal} from '@/store/AppGlobal'
+import {useRoute} from 'vue-router';
+import {computed, ref} from 'vue';
+import {ChartBarIcon, TvIcon} from '@heroicons/vue/24/outline';
+import {useAppGlobal} from '@/store/AppGlobal';
 
 // 可以在组件中的任意位置访问 `store` 变量 ✨
-const AppGlobal = useAppGlobal()
-const route = useRoute()
-
-
-
+const AppGlobal = useAppGlobal();
+const route = useRoute();
 
 
 const fileInput = ref(null);
 
 
 const handleFileDrop = async (event) => {
-  event.preventDefault();
-  try {
-    const file = event.dataTransfer.files[0];
-    await processFile(file);
+    event.preventDefault();
+    try {
+        const file = event.dataTransfer.files[0];
 
-  } catch (error) {
-    console.error('Error handling file drop:', error);
-  }
+        await processFile(file);
+
+    } catch (error) {
+        console.error('Error handling file drop:', error);
+    }
 };
 
 const handleFileChange = async (event) => {
-  try {
-    const file = event.target.files[0];
-    await processFile(file);
+    try {
+        const file = event.target.files[0];
 
-  } catch (error) {
-    console.error('Error handling file change:', error);
-  }
+        await processFile(file);
+
+    } catch (error) {
+        console.error('Error handling file change:', error);
+    }
 };
 
 const processFile = async (file) => {
-  if (!isValidFileType(file)) {
-    AppGlobal.file.uploadStatus = 2;
-    setTimeout(() => {
-      AppGlobal.file.uploadStatus = 0;
-    }, 2000);
-    return;
-  }
-  try {
-    AppGlobal.file.fileName = file.name;
-    AppGlobal.file.fileType = file.type;
-    AppGlobal.file.uploadStatus = 1;
-    AppGlobal.file.fileContent=file;
-  } catch (error) {
-    console.error('Error processing file:', error);
-    AppGlobal.file.uploadSuccess = false;
-  }
+    if (!isValidFileType(file)) {
+        AppGlobal.file.uploadStatus = 2;
+        setTimeout(() => {
+            AppGlobal.file.uploadStatus = 0;
+        }, 2000);
+        return;
+    }
+    try {
+        AppGlobal.file.fileName = file.name;
+        AppGlobal.file.fileType = file.type;
+        AppGlobal.file.uploadStatus = 1;
+        AppGlobal.file.fileContent=file;
+    } catch (error) {
+        console.error('Error processing file:', error);
+        AppGlobal.file.uploadSuccess = false;
+    }
 };
 const triggerFileInput = () => {
-  fileInput.value.click();  // 触发input的点击事件
+    fileInput.value.click(); // 触发input的点击事件
 };
 
 // 检验文件格式是否是PNG, JPEG, PDF
 function isValidFileType(file) {
-  const validTypes = ['image/png', 'image/jpeg', 'application/pdf'];
-  return validTypes.includes(file.type);
+    const validTypes = ['image/png', 'image/jpeg', 'application/pdf'];
+
+    return validTypes.includes(file.type);
 }
 
 
 const deleteFile=()=>{
-  AppGlobal.file.fileName = '';
-  AppGlobal.file.fileType = '';
-  AppGlobal.file.uploadStatus = 0;
-  AppGlobal.file.fileContent=null;
+    AppGlobal.file.fileName = '';
+    AppGlobal.file.fileType = '';
+    AppGlobal.file.uploadStatus = 0;
+    AppGlobal.file.fileContent=null;
 
-}
+};
 
 
 </script>

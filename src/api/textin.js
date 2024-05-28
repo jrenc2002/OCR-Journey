@@ -8,10 +8,10 @@ import { fromByteArray, toByteArray } from 'base64-js';
 const debug=true;
 // 定义URL常量
 const URLS = {
-  'CSV': 'https://api.textin.com/ai/service/v2/recognize/table/multipage?excel=1&table_type_hint=table_without_line',
-  'XLS': 'https://api.textin.com/ai/service/v2/recognize/table/multipage?excel=1&table_type_hint=table_without_line',
+    'CSV': 'https://api.textin.com/ai/service/v2/recognize/table/multipage?excel=1&table_type_hint=table_without_line',
+    'XLS': 'https://api.textin.com/ai/service/v2/recognize/table/multipage?excel=1&table_type_hint=table_without_line',
     'MD': 'https://api.textin.com/robot/v1.0/api/doc_restore',
-    'TXT': 'https://api.textin.com/ai/service/v2/recognize',
+    'TXT': 'https://api.textin.com/ai/service/v2/recognize/multipage',
     'DOCX':'https://api.textin.com/robot/v1.0/api/doc_restore'
 };
 
@@ -93,35 +93,35 @@ export const parseInocrDocx = (data) => {
 
 
 export const parseInocrTxt = (data) => {
-  // 确保 data 和 data.pages 定义且 data.pages 是一个数组
-  if (!data || !Array.isArray(data.pages)) {
-    console.error('parseInocrTxt: data.pages is not defined or not an array');
-    return '';
-  }
-
-  const pages = data.pages;
-  let resultText = '';
-
-  if (debug) {
-    console.log('parseInocrTxt data', data);
-    console.log('parseInocrTxt pages', pages);
-  }
-
-  // 遍历pages数组，每个元素代表一个页面
-  pages.forEach(page => {
-    const lines = page.lines;
-
-    if (Array.isArray(lines)) {
-      // 遍历lines数组，每个元素代表文本行的识别结果
-      lines.forEach(line => {
-        resultText += line.text + '\n'; // 添加每行识别的文本并换行
-      });
-    } else {
-      console.error('parseInocrTxt: page.lines is not an array', page);
+    // 确保 data 和 data.pages 定义且 data.pages 是一个数组
+    if (!data || !Array.isArray(data.pages)) {
+        console.error('parseInocrTxt: data.pages is not defined or not an array');
+        return '';
     }
-  });
 
-  return resultText;
+    const pages = data.pages;
+    let resultText = '';
+
+    if (debug) {
+        console.log('parseInocrTxt data', data);
+        console.log('parseInocrTxt pages', pages);
+    }
+
+    // 遍历pages数组，每个元素代表一个页面
+    pages.forEach(page => {
+        const lines = page.lines;
+
+        if (Array.isArray(lines)) {
+            // 遍历lines数组，每个元素代表文本行的识别结果
+            lines.forEach(line => {
+                resultText += line.text + '\n'; // 添加每行识别的文本并换行
+            });
+        } else {
+            console.error('parseInocrTxt: page.lines is not an array', page);
+        }
+    });
+
+    return resultText;
 };
 
 export const parseInocrCsv= (data)=>{

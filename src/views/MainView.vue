@@ -159,13 +159,7 @@ const textValue=ref(null)
 
 onMounted(() => {
     fileView();
-    // let content = '<p>更新日志</p> <p>2024-5-9 2:12 初步完成了TXT,CSV,XLS,Word,MD的OCR功能</p> ';
 
-    // Swal.fire({
-    //     'icon': 'info',
-    //     'confirmButtonText': '确定',
-    //     'html': content
-    // });
 });
 
 watch(AppGlobal.file, () => {
@@ -271,31 +265,31 @@ const fileKinds = ref([
         'icon': txtIcon,
         'color': 'bg-[rgb(233,241,254)] hover:bg-[rgb(213,221,234)]',
         'checked': false
-    },
-    {
-        'name': 'CSV',
-        'icon': csvIcon,
-        'color': 'bg-[rgb(234,245,245)] hover:bg-[rgb(214,225,225)]',
-        'checked': false
-    },
+    },{
+    'name': 'MD',
+    'icon': mdIcon,
+    'color': 'bg-[rgb(234,240,249)] hover:bg-[rgb(214,220,229)]',
+    'checked': false
+  },
+  {
+    'name': 'DOCX',
+    'icon': docxIcon,
+    'color': 'bg-[rgb(244,239,253)] hover:bg-[rgb(224,219,233)]',
+    'checked': false
+  },
     {
         'name': 'XLS',
         'icon': xlsIcon,
         'color': 'bg-[rgb(250,240,243)] hover:bg-[rgb(230,220,223)]',
         'checked': false
     },
-    {
-        'name': 'MD',
-        'icon': mdIcon,
-        'color': 'bg-[rgb(234,240,249)] hover:bg-[rgb(214,220,229)]',
-        'checked': false
-    },
-    {
-        'name': 'DOCX',
-        'icon': docxIcon,
-        'color': 'bg-[rgb(244,239,253)] hover:bg-[rgb(224,219,233)]',
-        'checked': false
-    }
+  {
+    'name': 'CSV',
+    'icon': csvIcon,
+    'color': 'bg-[rgb(234,245,245)] hover:bg-[rgb(214,225,225)]',
+    'checked': false
+  },
+
 ]);
 // 开始识别文件
 const startOCR = async () => {

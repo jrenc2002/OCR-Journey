@@ -25,7 +25,7 @@
 <br />
 <div align="center">
   <a >
-    <img src="public/Icon.png" alt="Logo" width="80" height="80">
+    <img src="https://imgse.com/i/pk336EQ" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">小鹿和小郭的OCR之旅</h3>

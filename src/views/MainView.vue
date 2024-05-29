@@ -77,13 +77,21 @@
       <div class="border relative rounded-2xl bg-white w-1/2 p-4">
 
 
-        <div class="w-full h-[2.2rem] text-xl pb-1 tracking-wide  top-0">识别结果 <span class="text-sm text-gray-500 ml-2">  识别预览仅供参考，请以实际导出效果为准</span></div>
+        <div class="w-full h-[2.2rem] text-xl pb-1 tracking-wide  top-0">识别结果 <span class="text-sm text-gray-500 ml-2">
+          预览仅供测试，实际导出效果要优于预览效果
+          <span class="px-5 font-bold text-blue-500 text-xl absolute right-0">{{excelUrl!=null||textValue!=null||docxUrl!=null||decodedMarkdown!=null?'可以导出':'等待识别结果'}}</span>
+
+        </span></div>
         <div class="w-full h-[calc(100%-2.2rem)] overflow-hidden relative">
-          <textarea v-if="AppGlobal.returnKind==='TXT'" v-model="parsedValue"
+          <textarea v-if="AppGlobal.returnKind==='TXT'" v-model="textValue"
                     class="w-full min-h-full focus:border-indigo-50 focus:border p-3" placeholder="">
           </textarea>
-          <div v-if="AppGlobal.returnKind==='CSV'||AppGlobal.returnKind==='XLS'">
-            <vue-office-excel :src="excelUrl"/>
+          <div v-if="AppGlobal.returnKind==='CSV'||AppGlobal.returnKind==='XLS'" class="relative w-full h-full">
+            <div class="absolute top-0 bottom-0 left-0 right-0 overflow-auto">
+              <div class="inline-block w-[300vw]">
+                <vue-office-excel :src="excelUrl"/>
+              </div>
+            </div>
           </div>
           <div v-if="AppGlobal.returnKind==='DOCX'" class="relative w-full h-full">
             <div class="absolute top-0 bottom-0 left-0 right-0 overflow-auto">
@@ -139,13 +147,15 @@ import {parseInocrCsv, parseInocrDocx, parseInocrMd, parseInocrTxt, parseInocrXl
 import {exportToCsvFile, exportToTxtFile, exportToXlsFile, exportToDocxFile, exportToMDFile} from '@/export';
 import VueOfficeExcel from '@vue-office/excel';
 import VueOfficeDocx from '@vue-office/docx';
-const fileUrl = ref();
-const excelUrl = ref();
-const docxUrl=ref();
+const fileUrl = ref(null);
+const excelUrl = ref(null);
+const docxUrl=ref(null);
 const AppGlobal = useAppGlobal();
 const returnOCR = ref();
-const parsedValue = ref('');
-const decodedMarkdown = ref('');
+const parsedValue = ref(null);
+const decodedMarkdown = ref(null);
+const textValue=ref(null)
+
 
 onMounted(() => {
     fileView();
@@ -180,7 +190,12 @@ const fileView = () => {
         reader.readAsDataURL(AppGlobal.file.fileContent); // 读取文件内容
     }
 };
-
+watch(AppGlobal.returnKind, () => {
+  excelUrl.value=null
+  textValue.value=null
+  docxUrl.value=null
+  decodedMarkdown.value=null
+})
 watch(parsedValue, () => {
     returnView();
 });
@@ -198,6 +213,15 @@ function base64ToBlob(baseContent) {
 
 const returnView = () => {
     if (AppGlobal.returnKind === 'TXT') {
+      if (parsedValue.value === '') {
+        Swal.fire({
+          'text': '读取文件失败，请重新识别文件',
+          'icon': 'warning',
+          'confirmButtonText': '确定'
+        });
+        return;
+      }
+      textValue.value = parsedValue.value;
     // 处理 TXT 文件的逻辑
     } else if (AppGlobal.returnKind === 'DOCX') {
         if (parsedValue.value === '') {
@@ -302,9 +326,14 @@ const startOCR = async () => {
     }
     // 选择文件解析类型
     AppGlobal.returnKind = fileKinds.value.filter((item) => item.checked)[0].name;
+    excelUrl.value=null
+    textValue.value=null
+    docxUrl.value=null
+    decodedMarkdown.value=null
     // 向API上传文件
     returnOCR.value = await postFile(AppGlobal.file.fileContent);
     parsedValue.value = await parseFile(returnOCR.value);
+
 
 };
 

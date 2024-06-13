@@ -1,3 +1,8 @@
+
+![02491e396088ed0b7180c8457cf2a13](https://github.com/lulu546/OCR-Journey/assets/87536202/555ebffd-fb12-41c8-9769-aaa38d3f01e2)
+
+
+
 <!-- Improved compatibility of back to top link: See: https://github.com/lulu546/OCR-Journey/pull/73 -->
 <a name="readme-top"></a>
 <!--
@@ -24,9 +29,6 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a >
-    <img src="https://imgse.com/i/pk336EQ" alt="Logo" width="80" height="80">
-  </a>
 
 <h3 align="center">小鹿和小郭的OCR之旅</h3>
 

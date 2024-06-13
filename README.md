@@ -103,9 +103,11 @@ yarn run build
 ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## About The Project  
 
-![Product Name Screen Shot](https://img.qovv.cn/2024/05/28/6654c99937b24.png)
+![image](https://github.com/lulu546/OCR-Journey/assets/87536202/4fcdb090-7dd5-47cc-b510-778ffa296b2d)
+
+
 
 小鹿和小郭的OCR之旅是一个寻求OCR最佳兼容方案的Web应用！  
 这个项目的目的是为了找到一个最佳的OCR兼容方案，以便在不同的设备和浏览器上都能正常使用OCR功能，同时我们希望可以兼容各家的OCR服务商，以便在不同的场景下都能正常使用OCR功能。

@@ -49,6 +49,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/node": "^22.13.13",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
@@ -70,9 +71,9 @@
     "vue-cli-plugin-tailwind": "~3.0.0"
   },
   "eslintConfig": {
-      "rules": {
-        "no-console": "off",
-        "no-debugger": "off"
-      }
+    "rules": {
+      "no-console": "off",
+      "no-debugger": "off"
+    }
   }
 }

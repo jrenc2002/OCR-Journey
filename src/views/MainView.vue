@@ -216,7 +216,6 @@ const returnView = () => {
         return;
       }
       textValue.value = parsedValue.value;
-    // 处理 TXT 文件的逻辑
     } else if (AppGlobal.returnKind === 'DOCX') {
         if (parsedValue.value === '') {
             Swal.fire({
